@@ -28,7 +28,8 @@ def init_db():
     )
     """)
 
-    cur.execute("SELECT * FROM users WHERE username='admin'")
+    # Crear admin si no existe
+    cur.execute("SELECT * FROM users WHERE username=?", ("admin",))
     if not cur.fetchone():
         cur.execute(
             "INSERT INTO users (username, password) VALUES (?, ?)",
@@ -57,37 +58,37 @@ def total():
 # ----------------- HOME -----------------
 @app.route("/")
 def home():
-    return f"""
+    return """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-    body {{
+    body {
         margin: 0;
         font-family: Arial;
         background: #0b1220;
         color: white;
-    }}
+    }
 
-    .header {{
+    .header {
         padding: 25px;
         text-align: center;
         background: linear-gradient(135deg,#0ea5e9,#6366f1);
-    }}
+    }
 
-    .container {{
+    .container {
         max-width: 600px;
         margin: auto;
         padding: 15px;
-    }}
+    }
 
-    .card {{
+    .card {
         background: #111827;
         padding: 15px;
         margin: 10px 0;
         border-radius: 15px;
-    }}
+    }
 
-    input, select {{
+    input, select {
         width: 100%;
         padding: 12px;
         margin: 6px 0;
@@ -96,9 +97,9 @@ def home():
         background: #0b1220;
         color: white;
         box-sizing: border-box;
-    }}
+    }
 
-    button {{
+    button {
         width: 100%;
         padding: 14px;
         border: none;
@@ -107,14 +108,14 @@ def home():
         color: white;
         font-weight: bold;
         cursor: pointer;
-    }}
+    }
 
-    a {{
+    a {
         color: #38bdf8;
         text-decoration: none;
-    }}
+    }
 
-    .bar {{
+    .bar {
         position: fixed;
         bottom: 0;
         left: 0;
@@ -123,7 +124,7 @@ def home():
         display: flex;
         justify-content: space-around;
         padding: 10px;
-    }}
+    }
     </style>
 
     <div class="header">
@@ -135,9 +136,9 @@ def home():
     <div class="container">
 
         <div class="card">
-            <h2>Planes</h2>
-            <p>5K • 10K • Trail • Ultra</p>
-            <p>Total inscritos: {total()}</p>
+            <h2>🐺 Black Jackals</h2>
+            <p>Entrenamiento para 5K • 10K • Trail • Ultra</p>
+            <p>Disciplina • Resistencia • Comunidad</p>
         </div>
 
         <div class="card">
@@ -195,10 +196,22 @@ def enviar():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        if (
-            request.form["user"] == "admin"
-            and request.form["password"] == "1234"
-        ):
+
+        conn = sqlite3.connect("app.db")
+        cur = conn.cursor()
+
+        cur.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (
+                request.form["user"],
+                request.form["password"]
+            )
+        )
+
+        user = cur.fetchone()
+        conn.close()
+
+        if user:
             session["admin"] = True
             return redirect("/admin")
 
@@ -250,6 +263,8 @@ def admin():
     <body style="background:#0b1220;color:white;font-family:Arial;padding:20px;">
 
     <h1>Panel Admin 🧠</h1>
+
+    <p>Total inscritos: {total()}</p>
 
     <a href="/logout">Salir</a>
 
