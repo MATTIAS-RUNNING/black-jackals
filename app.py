@@ -4,10 +4,7 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = "clave_super_segura_123"
 
-# ----------------- DB -----------------
-def init_db():
-    conn = sqlite3.connect("app.db")
-    cur = conn.cursor()
+
 
     cur.execute("""
     CREATE TABLE IF NOT EXISTS users (
