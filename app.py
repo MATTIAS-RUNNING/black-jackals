@@ -35,77 +35,29 @@ def init_db():
     conn.commit()
     conn.close()
 
-init_db()
 
-# ----------------- HOME (MÓVIL) -----------------
+# 🔥 FIX CLAVE PARA RENDER (IMPORTANTE)
+# en vez de correrlo “directo al importar”
+# lo ejecutamos de forma segura
+with app.app_context():
+    init_db()
+
+
+# ----------------- HOME -----------------
 @app.route("/")
 def home():
     return """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-    body {
-        margin:0;
-        font-family:Arial;
-        background:#0b1220;
-        color:white;
-    }
-
-    .header {
-        padding:25px;
-        text-align:center;
-        background:linear-gradient(135deg,#0ea5e9,#6366f1);
-    }
-
-    .container {
-        max-width:600px;
-        margin:auto;
-        padding:15px;
-    }
-
-    .card {
-        background:#111827;
-        padding:15px;
-        margin:10px 0;
-        border-radius:15px;
-        box-shadow:0 10px 20px rgba(0,0,0,0.3);
-    }
-
-    input, select {
-        width:100%;
-        padding:12px;
-        margin:6px 0;
-        border-radius:10px;
-        border:none;
-        background:#0b1220;
-        color:white;
-        font-size:16px;
-    }
-
-    button {
-        width:100%;
-        padding:14px;
-        border:none;
-        border-radius:12px;
-        background:linear-gradient(135deg,#0ea5e9,#6366f1);
-        color:white;
-        font-weight:bold;
-        font-size:16px;
-    }
-
+    body { margin:0; font-family:Arial; background:#0b1220; color:white; }
+    .header { padding:25px; text-align:center; background:linear-gradient(135deg,#0ea5e9,#6366f1); }
+    .container { max-width:600px; margin:auto; padding:15px; }
+    .card { background:#111827; padding:15px; margin:10px 0; border-radius:15px; }
+    input, select { width:100%; padding:12px; margin:6px 0; border-radius:10px; border:none; background:#0b1220; color:white; }
+    button { width:100%; padding:14px; border:none; border-radius:12px; background:linear-gradient(135deg,#0ea5e9,#6366f1); color:white; font-weight:bold; }
     a { color:#38bdf8; text-decoration:none; }
-
-    .bar {
-        position:fixed;
-        bottom:0;
-        left:0;
-        right:0;
-        background:#111827;
-        display:flex;
-        justify-content:space-around;
-        padding:10px;
-        border-top:1px solid #1f2937;
-    }
+    .bar { position:fixed; bottom:0; left:0; right:0; background:#111827; display:flex; justify-content:space-around; padding:10px; }
     </style>
 
     <div class="header">
@@ -126,7 +78,6 @@ def home():
         <h2>Anotate</h2>
 
         <form action="/enviar" method="POST">
-
         <input name="nombre" placeholder="Nombre">
         <input name="telefono" placeholder="Telefono">
         <input name="email" placeholder="Email">
@@ -139,7 +90,6 @@ def home():
         </select>
 
         <button>Unirme</button>
-
         </form>
     </div>
 
@@ -152,6 +102,7 @@ def home():
     </div>
     """
 
+
 # ----------------- TOTAL -----------------
 def total():
     conn = sqlite3.connect("app.db")
@@ -160,6 +111,7 @@ def total():
     t = cur.fetchone()[0]
     conn.close()
     return t
+
 
 # ----------------- ENVIAR -----------------
 @app.route("/enviar", methods=["POST"])
@@ -182,6 +134,7 @@ def enviar():
 
     return redirect("/")
 
+
 # ----------------- LOGIN -----------------
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -199,6 +152,7 @@ def login():
         <button>Entrar</button>
     </form>
     """
+
 
 # ----------------- ADMIN -----------------
 @app.route("/admin")
@@ -229,6 +183,7 @@ def admin():
     {lista}
     """
 
+
 # ----------------- DELETE -----------------
 @app.route("/delete/<int:id>")
 def delete(id):
@@ -243,10 +198,9 @@ def delete(id):
 
     return redirect("/admin")
 
+
 # ----------------- LOGOUT -----------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
-
-
